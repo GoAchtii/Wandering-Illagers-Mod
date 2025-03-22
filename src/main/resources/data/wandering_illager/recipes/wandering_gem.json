@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LLL",
+    "LCL",
+    "LLL"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:redstone dust"
+    },
+    "L": {
+      "item": "wandering_illager:faded_gem"
+    }
+  },
+  "result": {
+    "item": "wandering_illager:wandering_gem"
+  },
+  "show_notification": true
+}

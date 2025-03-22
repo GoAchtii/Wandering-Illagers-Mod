@@ -1,7 +1,11 @@
 package de.achtii.wandering_illager;
 
 import com.mojang.logging.LogUtils;
+import de.achtii.wandering_illager.item.ModCreativeModeTabs;
+import de.achtii.wandering_illager.item.ModItems;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,6 +25,10 @@ public class wandering_illager {
     public wandering_illager() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModCreativeModeTabs.register(modEventBus);
+
+        ModItems.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -30,8 +38,15 @@ public class wandering_illager {
         public void onServerStarting(ServerStartingEvent event) {
         }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
+        private void commonSetup(final FMLCommonSetupEvent event) {
     }
+
+        private void addCreative(BuildCreativeModeTabContentsEvent event) {
+            if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+                event.accept(ModItems.FADED_GEM);
+                event.accept(ModItems.WANDERING_GEM);
+            }
+        }
 
     @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
