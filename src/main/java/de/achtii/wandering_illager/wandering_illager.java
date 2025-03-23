@@ -41,13 +41,6 @@ public class wandering_illager {
         private void commonSetup(final FMLCommonSetupEvent event) {
     }
 
-        private void addCreative(BuildCreativeModeTabContentsEvent event) {
-            if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-                event.accept(ModItems.FADED_GEM);
-                event.accept(ModItems.WANDERING_GEM);
-            }
-        }
-
     @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
         }
