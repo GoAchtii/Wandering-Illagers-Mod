@@ -1,21 +1,15 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "pattern": [
-    "LLL",
-    "LCL",
-    "LLL"
-  ],
-  "key": {
-    "C": {
-      "item": "minecraft:redstone dust"
-    },
-    "L": {
-      "item": "wandering_illager:faded_gem"
-    }
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "wandering_illager:wandering_fragment"
+  },
+  "base": {
+    "item": "wandering_illager:wandering_fragment"
+  },
+  "addition": {
+    "item": "wandering_illager:wandering_fragment"
   },
   "result": {
     "item": "wandering_illager:wandering_gem"
-  },
-  "show_notification": true
+  }
 }

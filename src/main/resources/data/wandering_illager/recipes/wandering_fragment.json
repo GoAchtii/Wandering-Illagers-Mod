@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "wandering_illager:faded_gem"
+  },
+  "result": "wandering_illager:wandering_fragment",
+  "craftRemainder": "minecraft:cobblestone",
+  "group": "misc",
+  "count": 1
+}
