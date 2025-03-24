@@ -8,10 +8,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
+
     public static final DeferredRegister<Item> ITEMS =
             // Add items to list when forge loads them
             DeferredRegister.create(ForgeRegistries.ITEMS, wandering_illager.MODID);
 
+    //Register new Items
     public static final RegistryObject<Item> FADED_GEM = ITEMS.register("faded_gem",
             () -> new Item(new Item.Properties()));
 
@@ -21,6 +23,7 @@ public class ModItems {
     public static final RegistryObject<Item> WANDERING_FRAGMENT = ITEMS.register("wandering_fragment",
             () -> new Item(new Item.Properties()));
 
+    //Register Method
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
     }
