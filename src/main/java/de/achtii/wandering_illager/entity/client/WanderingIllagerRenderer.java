@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 public class WanderingIllagerRenderer extends MobRenderer<WanderingIllagerEntity, WanderingIllagerModel<WanderingIllagerEntity>> {
     public WanderingIllagerRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new WanderingIllagerModel<>(pContext.bakeLayer(ModModelLayers.WANDERING_ILLAGER_LAYER)), 0.5f);
+        
     }
 
     @Override

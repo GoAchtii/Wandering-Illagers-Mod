@@ -5,6 +5,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -13,16 +14,19 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.util.GoalUtils;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Ravager;
 import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -103,21 +107,32 @@ public class WanderingIllagerEntity extends AbstractIllager{
 
     @Override
     protected void registerGoals() {
+        super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new WanderingIllagerAttackGoal(this, 1.0D, true));
-
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.5, true));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 4f));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-
-        this.targetSelector.addGoal(1, new MeleeAttackGoal(this, 1, false));
+        this.goalSelector.addGoal(1, new WanderingIllagerAttackGoal(this,1.0D,true));
+        this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
+        this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
+        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[]{Raider.class})).setAlertOthers(new Class[0]));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, AbstractVillager.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, IronGolem.class, true));
+        this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
-        if (this.getCurrentRaid() == null) {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
+
+    }
+
+    protected void customServerAiStep() {
+        if (!this.isNoAi() && GoalUtils.hasGroundPathNavigation(this)) {
+            boolean $$0 = ((ServerLevel)this.level()).isRaided(this.blockPosition());
+            ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors($$0);
         }
 
+        super.customServerAiStep();
     }
 
     public boolean isAlliedTo(Entity pEntity) {
@@ -127,6 +142,14 @@ public class WanderingIllagerEntity extends AbstractIllager{
             return this.getTeam() == null && pEntity.getTeam() == null;
         } else {
             return false;
+        }
+    }
+
+    public AbstractIllager.IllagerArmPose getArmPose() {
+        if (this.isAggressive()) {
+            return IllagerArmPose.ATTACKING;
+        } else {
+            return this.isCelebrating() ? IllagerArmPose.CELEBRATING : IllagerArmPose.CROSSED;
         }
     }
 
@@ -142,13 +165,11 @@ public class WanderingIllagerEntity extends AbstractIllager{
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return AbstractIllager.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 20D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.MOVEMENT_SPEED, 1.5D)
-                .add(Attributes.ARMOR_TOUGHNESS, 0.5f)
-                .add(Attributes.ATTACK_KNOCKBACK, 0.5f)
-                .add(Attributes.ATTACK_DAMAGE, 7f);
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MOVEMENT_SPEED, 0.3199999940395355)
+                .add(Attributes.FOLLOW_RANGE, 12.0)
+                .add(Attributes.MAX_HEALTH, 24.0)
+                .add(Attributes.ATTACK_DAMAGE, 9.0);
     }
 
     @Nullable

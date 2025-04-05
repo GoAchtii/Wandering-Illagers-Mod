@@ -32,13 +32,13 @@ public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T
 	public WanderingIllagerModel(ModelPart root) {
 		this.wandering_illager = root.getChild("wandering_illager");
 		this.head = this.wandering_illager.getChild("head");
-		this.nose = this.wandering_illager.getChild("nose");
+		this.nose = this.head.getChild("nose");
 		this.body = this.wandering_illager.getChild("body");
-		this.arms = this.wandering_illager.getChild("arms");
+		this.arms = this.body.getChild("arms");
 		this.arms_rotation = this.arms.getChild("arms_rotation");
 		this.arms_flipped = this.arms_rotation.getChild("arms_flipped");
-		this.left_arm = this.wandering_illager.getChild("left_arm");
-		this.right_arm = this.wandering_illager.getChild("right_arm");
+		this.left_arm = this.body.getChild("left_arm");
+		this.right_arm = this.body.getChild("right_arm");
 		this.left_leg = this.wandering_illager.getChild("left_leg");
 		this.right_leg = this.wandering_illager.getChild("right_leg");
 	}
@@ -50,23 +50,23 @@ public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T
 		PartDefinition wandering_illager = partdefinition.addOrReplaceChild("wandering_illager", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
 		PartDefinition head = wandering_illager.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(32, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, -24.0F, 0.0F));
+				.texOffs(32, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, -24.0F, 0.0F));
 
-		PartDefinition nose = wandering_illager.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(24, 0).addBox(-1.0F, -1.0F, -6.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -26.0F, 0.0F));
+		PartDefinition nose = head.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(24, 0).addBox(-1.0F, -1.0F, -6.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.0F, 0.0F));
 
 		PartDefinition body = wandering_illager.addOrReplaceChild("body", CubeListBuilder.create().texOffs(16, 20).addBox(-4.0F, 0.0F, -3.0F, 8.0F, 12.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 38).addBox(-4.0F, 0.0F, -3.0F, 8.0F, 18.0F, 6.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, -24.0F, 0.0F));
+				.texOffs(0, 38).addBox(-4.0F, 0.0F, -3.0F, 8.0F, 18.0F, 6.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, -24.0F, 0.0F));
 
-		PartDefinition arms = wandering_illager.addOrReplaceChild("arms", CubeListBuilder.create(), PartPose.offset(0.0F, -20.5F, 0.3F));
+		PartDefinition arms = body.addOrReplaceChild("arms", CubeListBuilder.create(), PartPose.offset(0.0F, 3.5F, 0.3F));
 
 		PartDefinition arms_rotation = arms.addOrReplaceChild("arms_rotation", CubeListBuilder.create().texOffs(44, 22).addBox(-2.0F, -8.4801F, -1.7539F, 4.0F, 8.0F, 4.0F, new CubeDeformation(0.0F))
-		.texOffs(40, 38).addBox(2.0F, -4.4801F, -1.7539F, 8.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-6.0F, 4.0F, -5.95F, -0.7505F, 0.0F, 0.0F));
+				.texOffs(40, 38).addBox(2.0F, -4.4801F, -1.7539F, 8.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-6.0F, 4.0F, -5.95F, -0.7505F, 0.0F, 0.0F));
 
 		PartDefinition arms_flipped = arms_rotation.addOrReplaceChild("arms_flipped", CubeListBuilder.create().texOffs(44, 22).mirror().addBox(-2.0F, -8.0F, -2.05F, 4.0F, 8.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(12.0F, -0.4801F, 0.2961F));
 
-		PartDefinition left_arm = wandering_illager.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(40, 46).mirror().addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(5.0F, -22.0F, 0.0F));
+		PartDefinition left_arm = body.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(40, 46).mirror().addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(5.0F, 2.0F, 0.0F));
 
-		PartDefinition right_arm = wandering_illager.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 46).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.0F, -22.0F, 0.0F));
+		PartDefinition right_arm = body.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 46).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
 
 		PartDefinition left_leg = wandering_illager.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(0, 22).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(2.0F, -12.0F, 0.0F));
 
@@ -91,7 +91,7 @@ public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T
 
 		this.animateWalk(ModAnimationDefinitions.walk, limbSwing, limbSwingAmount, 2f, 1f);
 		this.animate(((WanderingIllagerEntity) entity).idleAnimationState, ModAnimationDefinitions.idle, ageInTicks, 1f);
-		this.animate(((WanderingIllagerEntity) entity).attackAnimationState, ModAnimationDefinitions.attack, ageInTicks, 1f);
+		this.animate(((WanderingIllagerEntity) entity).attackAnimationState, ModAnimationDefinitions.attack_mode, ageInTicks, 1f);
 	}
 
 	@Override
