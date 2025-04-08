@@ -15,7 +15,7 @@ public class ModEntities {
 
     //Registers new Entity
     public static final RegistryObject<EntityType<WanderingIllagerEntity>> WANDERINGILLAGER =
-            ENTITY_TYPES.register("wandering_illager", () -> EntityType.Builder.of(WanderingIllagerEntity::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("wandering_illager", () -> EntityType.Builder.of(WanderingIllagerEntity::new, MobCategory.MONSTER)
                     .sized(1.2f, 1.5f).build("wandering_illager"));
 
     //Register Method

@@ -6,7 +6,12 @@ import de.achtii.wandering_illager.entity.client.WanderingIllagerRenderer;
 import de.achtii.wandering_illager.item.ModCreativeModeTabs;
 import de.achtii.wandering_illager.item.ModItems;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -28,6 +33,8 @@ public class wandering_illager {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public wandering_illager() {
+
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModCreativeModeTabs.register(modEventBus);
@@ -59,4 +66,4 @@ public class wandering_illager {
             EntityRenderers.register(ModEntities.WANDERINGILLAGER.get(), WanderingIllagerRenderer::new);
         }
     }
-    }
+}

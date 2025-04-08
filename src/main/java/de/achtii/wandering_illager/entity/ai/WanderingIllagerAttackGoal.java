@@ -21,8 +21,8 @@ public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
     @Override
     public void start() {
         super.start();
-        attackDelay = 11;
-        ticksUntilNextAttack = 11;
+        attackDelay = 9;
+        ticksUntilNextAttack = 9;
     }
 
     @Override

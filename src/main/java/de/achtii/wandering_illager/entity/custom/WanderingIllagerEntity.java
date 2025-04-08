@@ -2,7 +2,6 @@ package de.achtii.wandering_illager.entity.custom;
 
 import de.achtii.wandering_illager.entity.ai.WanderingIllagerAttackGoal;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -22,8 +21,6 @@ import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Ravager;
-import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
@@ -33,13 +30,12 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.world.entity.monster.AbstractIllager.IllagerArmPose.ATTACKING;
 
-public class WanderingIllagerEntity extends AbstractIllager{
+public class WanderingIllagerEntity extends AbstractIllager {
     private static final EntityDataAccessor<Boolean> ATTACKING =
             SynchedEntityData.defineId(WanderingIllagerEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public WanderingIllagerEntity(EntityType<? extends AbstractIllager> pEntityType, Level pLevel){
+    public WanderingIllagerEntity(EntityType<? extends WanderingIllagerEntity> pEntityType, Level pLevel){
         super(pEntityType, pLevel);
     }
 
@@ -164,12 +160,13 @@ public class WanderingIllagerEntity extends AbstractIllager{
         return null;
     }
 
+
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.3199999940395355)
-                .add(Attributes.FOLLOW_RANGE, 12.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.4199999940395355)
+                .add(Attributes.FOLLOW_RANGE, 16.0)
                 .add(Attributes.MAX_HEALTH, 24.0)
-                .add(Attributes.ATTACK_DAMAGE, 9.0);
+                .add(Attributes.ATTACK_DAMAGE, 12.0);
     }
 
     @Nullable
