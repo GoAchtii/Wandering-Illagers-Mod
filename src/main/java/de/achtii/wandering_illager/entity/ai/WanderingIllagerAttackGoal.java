@@ -9,8 +9,8 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
 public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
     private final WanderingIllagerEntity entity;
-    private int attackDelay = 11;
-    private int ticksUntilNextAttack = 11;
+    private int attackDelay = 9;
+    private int ticksUntilNextAttack = 9;
     private boolean shouldCountTillNextAttack = false;
 
     public WanderingIllagerAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen) {

@@ -110,8 +110,8 @@ public class WanderingIllagerEntity extends AbstractIllager {
         this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[]{Raider.class})).setAlertOthers(new Class[0]));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal(this, Player.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, AbstractVillager.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, IronGolem.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, AbstractVillager.class, true));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, IronGolem.class, true));
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
@@ -165,8 +165,8 @@ public class WanderingIllagerEntity extends AbstractIllager {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, 0.4199999940395355)
                 .add(Attributes.FOLLOW_RANGE, 16.0)
-                .add(Attributes.MAX_HEALTH, 24.0)
-                .add(Attributes.ATTACK_DAMAGE, 12.0);
+                .add(Attributes.MAX_HEALTH, 40.0)
+                .add(Attributes.ATTACK_DAMAGE, 14.0);
     }
 
     @Nullable
