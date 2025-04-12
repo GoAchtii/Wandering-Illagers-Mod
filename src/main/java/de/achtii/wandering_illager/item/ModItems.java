@@ -1,7 +1,10 @@
 package de.achtii.wandering_illager.item;
 
+import de.achtii.wandering_illager.entity.ModEntities;
+import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
 import de.achtii.wandering_illager.wandering_illager;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -22,6 +25,9 @@ public class ModItems {
 
     public static final RegistryObject<Item> WANDERING_FRAGMENT = ITEMS.register("wandering_fragment",
             () -> new Item(new Item.Properties()));
+
+    public static final RegistryObject<ForgeSpawnEggItem> WANDERING_SPAWN_EGG = ITEMS.register("wandering_spawn_egg",
+            ()-> new ForgeSpawnEggItem(ModEntities.WANDERINGILLAGER, 100000, 880808, new Item.Properties() ));
 
     //Register Method
     public static void register(IEventBus eventBus){

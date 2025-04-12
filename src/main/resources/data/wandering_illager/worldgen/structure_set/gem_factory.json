@@ -1,0 +1,17 @@
+{
+  "structures": [
+    {
+      "structure": "wandering_illager:gem_factory",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 24000042,
+
+    "spacing": 20,
+
+    "separation": 6,
+
+    "type": "minecraft:random_spread"
+  }
+}

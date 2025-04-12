@@ -2,10 +2,13 @@ package de.achtii.wandering_illager.entity.ai;
 
 import de.achtii.wandering_illager.entity.client.WanderingIllagerModel;
 import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
+import de.achtii.wandering_illager.item.ModItems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.player.Player;
 
 public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
     private final WanderingIllagerEntity entity;
@@ -30,19 +33,23 @@ public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
         if (isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
             shouldCountTillNextAttack = true;
 
-            if(isTimeToStartAttackAnimation()) {
-                entity.setAttacking(true);
-            }
+            Player player = Minecraft.getInstance().player;
+            assert player != null;
+            if (player.getMainHandItem().getItem() != ModItems.WANDERING_GEM.get()) {
+                if (isTimeToStartAttackAnimation()) {
+                    entity.setAttacking(true);
+                }
 
-            if(isTimeToAttack()) {
-                this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getEyeY(), pEnemy.getZ());
-                performAttack(pEnemy);
+                if (isTimeToAttack()) {
+                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getEyeY(), pEnemy.getZ());
+                    performAttack(pEnemy);
+                }
+            } else {
+                resetAttackCooldown();
+                shouldCountTillNextAttack = false;
+                entity.setAttacking(false);
+                entity.attackAnimationTimeout = 0;
             }
-        } else {
-            resetAttackCooldown();
-            shouldCountTillNextAttack = false;
-            entity.setAttacking(false);
-            entity.attackAnimationTimeout = 0;
         }
     }
 
@@ -69,8 +76,9 @@ public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
 
     protected void performAttack(LivingEntity pEnemy) {
         this.resetAttackCooldown();
-        this.mob.swing(InteractionHand.MAIN_HAND);
-        this.mob.doHurtTarget(pEnemy);
+            this.mob.swing(InteractionHand.MAIN_HAND);
+            this.mob.doHurtTarget(pEnemy);
+
     }
 
     @Override

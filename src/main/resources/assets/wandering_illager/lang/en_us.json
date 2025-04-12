@@ -2,6 +2,8 @@
   "item.wandering_illager.faded_gem": "Faded Gem",
   "item.wandering_illager.wandering_gem": "Wandering Gem",
   "item.wandering_illager.wandering_fragment": "Wandering Fragment",
+  "mob.wandering_illager.wandering_illager": "Wandering Illager",
+  "item.wandering_illager.wandering_spawn_egg": "Wandering Illager Spawn Egg",
 
-  "creativetab.wandering_tab": "Wandering Illagers"
+  "creativetab.wandering_tab": "The Wandering Illagers"
 }

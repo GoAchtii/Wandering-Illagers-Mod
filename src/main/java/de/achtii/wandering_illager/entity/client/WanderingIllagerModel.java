@@ -2,17 +2,34 @@ package de.achtii.wandering_illager.entity.client;
 // Made with Blockbench 4.12.3
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Transformation;
 import de.achtii.wandering_illager.entity.animations.ModAnimationDefinitions;
 import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelPart;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.Minecraft;
+
+import static net.minecraft.world.entity.monster.AbstractIllager.IllagerArmPose.*;
 
 public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
@@ -83,15 +100,29 @@ public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T
 		this.head.xRot = pHeadPitch * ((float)Math.PI / 180F);
 	}
 
-
 	@Override
 	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.applyHeadRotation(netHeadYaw, headPitch, ageInTicks);
 
-		this.animateWalk(ModAnimationDefinitions.walk, limbSwing, limbSwingAmount, 2f, 1f);
+		this.animateWalk(ModAnimationDefinitions.walk, limbSwing, limbSwingAmount, 3f, 1f);
 		this.animate(((WanderingIllagerEntity) entity).idleAnimationState, ModAnimationDefinitions.idle, ageInTicks, 1f);
-		this.animate(((WanderingIllagerEntity) entity).attackAnimationState, ModAnimationDefinitions.attack_mode, ageInTicks, 1f);
+		this.animate(((WanderingIllagerEntity) entity).attackAnimationState, ModAnimationDefinitions.attack, ageInTicks, 2f);
+
+		if (entity instanceof WanderingIllagerEntity) {
+			boolean crossed = ((WanderingIllagerEntity) entity).ArmsCrossed();
+			if (crossed == false){
+				left_arm.visible = true;
+				right_arm.visible = true;
+				arms.visible = false;
+			}
+			else {
+				left_arm.visible = false;
+				right_arm.visible = false;
+				arms.visible = true;
+			}
+
+		}else{System.out.println("Not working");};
 	}
 
 	@Override

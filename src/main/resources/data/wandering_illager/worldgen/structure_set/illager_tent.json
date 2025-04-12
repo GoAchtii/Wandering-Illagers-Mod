@@ -1,0 +1,17 @@
+{
+  "structures": [
+    {
+      "structure": "wandering_illager:illager_tent",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 24044042,
+
+    "spacing": 20,
+
+    "separation": 6,
+
+    "type": "minecraft:random_spread"
+  }
+}

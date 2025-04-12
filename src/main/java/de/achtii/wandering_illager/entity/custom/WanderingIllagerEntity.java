@@ -1,6 +1,10 @@
 package de.achtii.wandering_illager.entity.custom;
 
 import de.achtii.wandering_illager.entity.ai.WanderingIllagerAttackGoal;
+import de.achtii.wandering_illager.entity.client.WanderingIllagerModel;
+import de.achtii.wandering_illager.item.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -29,6 +33,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+
+import static net.minecraft.world.InteractionHand.MAIN_HAND;
+import static net.minecraft.world.entity.monster.AbstractIllager.IllagerArmPose.ATTACKING;
 
 
 public class WanderingIllagerEntity extends AbstractIllager {
@@ -106,8 +113,8 @@ public class WanderingIllagerEntity extends AbstractIllager {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new WanderingIllagerAttackGoal(this,1.0D,true));
-        this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
-        this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
+        this.goalSelector.addGoal(2, new RaiderOpenDoorGoal(this));
+        this.goalSelector.addGoal(3, new HoldGroundAttackGoal(this, 10.0F));
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[]{Raider.class})).setAlertOthers(new Class[0]));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, AbstractVillager.class, true));
@@ -117,9 +124,13 @@ public class WanderingIllagerEntity extends AbstractIllager {
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
     }
 
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
+    public void populateDefaultEquipmentSlots() {
+        RandomSource random = this.getRandom();
+        ItemStack weapon = random.nextFloat() < 0.3f
+                ? new ItemStack(Items.DIAMOND_AXE)
+                : new ItemStack(Items.IRON_AXE);
 
+        this.setItemSlot(EquipmentSlot.MAINHAND, weapon);
     }
 
     protected void customServerAiStep() {
@@ -141,13 +152,19 @@ public class WanderingIllagerEntity extends AbstractIllager {
         }
     }
 
-    public AbstractIllager.IllagerArmPose getArmPose() {
+    public IllagerArmPose getArmPose() {
         if (this.isAggressive()) {
             return IllagerArmPose.ATTACKING;
+
         } else {
             return this.isCelebrating() ? IllagerArmPose.CELEBRATING : IllagerArmPose.CROSSED;
         }
     }
+
+    public boolean ArmsCrossed(){
+        return this.getArmPose() == IllagerArmPose.CROSSED;
+    }
+
 
     @Override
     public void applyRaidBuffs(int i, boolean b) {
@@ -163,10 +180,10 @@ public class WanderingIllagerEntity extends AbstractIllager {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.4199999940395355)
+                .add(Attributes.MOVEMENT_SPEED, 0.3799999940395355)
                 .add(Attributes.FOLLOW_RANGE, 16.0)
                 .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.ATTACK_DAMAGE, 14.0);
+                .add(Attributes.ATTACK_DAMAGE, 12.0);
     }
 
     @Nullable
