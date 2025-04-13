@@ -4,15 +4,18 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.achtii.wandering_illager.entity.animations.ModAnimationDefinitions;
 import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
+import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 
-public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T> {
-	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+
+public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T> implements ArmedModel {
+
 
 	private final ModelPart wandering_illager;
 	private final ModelPart head;
@@ -115,4 +118,18 @@ public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T
 		return wandering_illager;
 	}
 
+	@Override
+	public void translateToHand(HumanoidArm humanoidArm, PoseStack poseStack) {
+		this.root().translateAndRotate(poseStack);
+
+		if (right_arm.visible && left_arm.visible){
+		if (humanoidArm == HumanoidArm.RIGHT) {
+			this.right_arm.translateAndRotate(poseStack);
+			poseStack.translate(1.0F, -2F, 0.0F);
+		} else {
+			this.left_arm.translateAndRotate(poseStack);
+			poseStack.translate(1.0F, -2F, 0.0F);
+		}
+		}
+	}
 }

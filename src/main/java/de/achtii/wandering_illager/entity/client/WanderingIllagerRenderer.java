@@ -6,12 +6,18 @@ import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
-public class WanderingIllagerRenderer extends MobRenderer<WanderingIllagerEntity, WanderingIllagerModel<WanderingIllagerEntity>> {
+public class WanderingIllagerRenderer
+        extends MobRenderer<WanderingIllagerEntity, WanderingIllagerModel<WanderingIllagerEntity>>
+        implements RenderLayerParent<WanderingIllagerEntity, WanderingIllagerModel<WanderingIllagerEntity>> {
+
     public WanderingIllagerRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new WanderingIllagerModel<>(pContext.bakeLayer(ModModelLayers.WANDERING_ILLAGER_LAYER)), 0.5f);
-        
+
+        this.addLayer(new ItemInHandLayer<>(this, pContext.getItemInHandRenderer()));
     }
 
     @Override

@@ -8,13 +8,22 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,6 +38,7 @@ import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Mod.EventBusSubscriber(modid = wandering_illager.MODID)
@@ -70,32 +80,63 @@ public class ModEvents {
         }
     }
 
+
     @SubscribeEvent
     public static void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
         Level level = event.getLevel();
         Player player = event.getEntity();
         ItemStack itemStack = event.getItemStack();
         Entity target = event.getTarget();
+        RandomSource random = level.random;
 
-        if (target instanceof WanderingIllagerEntity illager) {
+        if (!(target instanceof WanderingIllagerEntity illager)) return;
 
-            if (itemStack.is(ModItems.WANDERING_GEM.get())) {
-                if (!level.isClientSide) {
-                    double x = illager.getX();
-                    double y = illager.getY();
-                    double z = illager.getZ();
+        if (!itemStack.is(ModItems.WANDERING_GEM.get())) return;
 
-                    level.addFreshEntity(new ExperienceOrb(level, target.getX(), target.getY(), target.getZ(), 200));
-                    illager.discard();
-                    spawnVillager(level, x, y, z);
+        if (!level.isClientSide) {
+            ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
+            ItemStack dummyItem;
 
-                    if (!player.isCreative()) {
-                        itemStack.shrink(1);
-                    }
-                }
+            int randomLevel = Mth.nextInt(random, 1, 5);
 
+            if (randomLevel == 1) {
+                dummyItem = new ItemStack(Items.IRON_SWORD);
+            } else if (randomLevel == 2) {
+                dummyItem = new ItemStack(Items.IRON_PICKAXE);
+            } else if (randomLevel == 3) {
+                dummyItem = new ItemStack(Items.IRON_CHESTPLATE);
+            } else if (randomLevel == 4) {
+                dummyItem = new ItemStack(Items.IRON_HELMET);
+            } else if (randomLevel == 5){
+                dummyItem = new ItemStack(Items.IRON_BOOTS);
+            } else {
+                dummyItem = new ItemStack(Items.IRON_SHOVEL);
+            }
+
+            List<EnchantmentInstance> enchantments = EnchantmentHelper.selectEnchantment(random, dummyItem, 16, true);
+
+            for (EnchantmentInstance enchantment : enchantments) {
+                EnchantedBookItem.addEnchantment(enchantedBook, enchantment);
+            }
+
+            if (enchantments.isEmpty()) {
+                EnchantedBookItem.addEnchantment(enchantedBook, new EnchantmentInstance(Enchantments.SHARPNESS, 2));
+            }
+
+            ItemEntity bookDrop = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), enchantedBook);
+            level.addFreshEntity(bookDrop);
+
+            level.addFreshEntity(new ExperienceOrb(level, illager.getX(), illager.getY(), illager.getZ(), 200));
+
+            illager.discard();
+            spawnVillager(level, illager.getX(), illager.getY(), illager.getZ());
+
+            if (!player.isCreative()) {
+                itemStack.shrink(1);
             }
         }
+
+        event.setCanceled(true);
     }
 
     public static void spawn(Level level, double x, double y, double z) {
