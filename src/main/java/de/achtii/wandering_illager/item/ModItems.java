@@ -1,7 +1,6 @@
 package de.achtii.wandering_illager.item;
 
 import de.achtii.wandering_illager.entity.ModEntities;
-import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
 import de.achtii.wandering_illager.wandering_illager;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;

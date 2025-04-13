@@ -1,10 +1,6 @@
 package de.achtii.wandering_illager.entity.custom;
 
 import de.achtii.wandering_illager.entity.ai.WanderingIllagerAttackGoal;
-import de.achtii.wandering_illager.entity.client.WanderingIllagerModel;
-import de.achtii.wandering_illager.item.ModItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -12,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -33,9 +28,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
-
-import static net.minecraft.world.InteractionHand.MAIN_HAND;
-import static net.minecraft.world.entity.monster.AbstractIllager.IllagerArmPose.ATTACKING;
 
 
 public class WanderingIllagerEntity extends AbstractIllager {
@@ -180,10 +172,10 @@ public class WanderingIllagerEntity extends AbstractIllager {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.3799999940395355)
+                .add(Attributes.MOVEMENT_SPEED, 0.3599999940395355)
                 .add(Attributes.FOLLOW_RANGE, 16.0)
-                .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.ATTACK_DAMAGE, 12.0);
+                .add(Attributes.MAX_HEALTH, 28.0)
+                .add(Attributes.ATTACK_DAMAGE, 10.0);
     }
 
     @Nullable

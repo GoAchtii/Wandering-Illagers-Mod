@@ -1,6 +1,5 @@
 package de.achtii.wandering_illager.entity.ai;
 
-import de.achtii.wandering_illager.entity.client.WanderingIllagerModel;
 import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
 import de.achtii.wandering_illager.item.ModItems;
 import net.minecraft.client.Minecraft;

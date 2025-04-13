@@ -5,8 +5,6 @@ import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
-import static net.minecraft.world.entity.monster.AbstractIllager.IllagerArmPose.*;
-
 public class ModAnimationDefinitions {
         public static final AnimationDefinition idle = AnimationDefinition.Builder.withLength(6.3168F).looping()
                 .addAnimation("arms", new AnimationChannel(AnimationChannel.Targets.ROTATION,

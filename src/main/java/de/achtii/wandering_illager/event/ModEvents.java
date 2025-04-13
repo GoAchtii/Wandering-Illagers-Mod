@@ -1,6 +1,5 @@
 package de.achtii.wandering_illager.event;
 
-import com.mojang.datafixers.optics.Wander;
 import de.achtii.wandering_illager.entity.ModEntities;
 import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
 import de.achtii.wandering_illager.item.ModItems;
@@ -9,43 +8,26 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.AbstractIllager;
-import net.minecraft.world.inventory.MerchantContainer;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.entity.npc.WanderingTrader;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.npc.VillagerTrades;
-import net.minecraft.world.entity.npc.WanderingTrader;
-import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.MobSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import javax.swing.event.MenuEvent;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
-import static net.minecraft.commands.arguments.EntityArgument.getEntity;
-import static net.minecraft.world.InteractionHand.MAIN_HAND;
 
 
 @Mod.EventBusSubscriber(modid = wandering_illager.MODID)
@@ -87,19 +69,80 @@ public class ModEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
+        Level level = event.getLevel();
+        Player player = event.getEntity();
+        ItemStack itemStack = event.getItemStack();
+        Entity target = event.getTarget();
+
+        if (target instanceof WanderingIllagerEntity illager) {
+
+            if (itemStack.is(ModItems.WANDERING_GEM.get())) {
+                if (!level.isClientSide) {
+                    double x = illager.getX();
+                    double y = illager.getY();
+                    double z = illager.getZ();
+
+                    illager.discard();
+                    spawnVillager(level, x, y, z);
+
+                    if (!player.isCreative()) {
+                        itemStack.shrink(1);
+                    }
+                }
+
+            }
+        }
+    }
+
     public static void spawn(Level level, double x, double y, double z) {
         WanderingIllagerEntity WanderingIllager = new WanderingIllagerEntity(ModEntities.WANDERINGILLAGER.get(), (ServerLevel) level);
         WanderingIllager.setPos(x,y,z);
         WanderingIllager.populateDefaultEquipmentSlots();
         level.addFreshEntity(WanderingIllager);
 
-        ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE, x, y + 1, z, 20, 0.3, 0.5, 0.3, 0.02);
-        ((ServerLevel) level).sendParticles(ParticleTypes.ENCHANT, x, y + 1, z, 30, 0.3, 0.6, 0.3, 0.1);
+        ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE, x, y + 1, z, 30, 0.3, 0.5, 0.3, 0.02);
+        ((ServerLevel) level).sendParticles(ParticleTypes.ENCHANT, x, y + 1, z, 40, 0.3, 0.6, 0.3, 0.1);
 
         level.playSound(
                 null,
                 x, y, z,
                 SoundEvents.FIRE_EXTINGUISH,
+                SoundSource.NEUTRAL,
+                1.0f,
+                1.2f
+        );
+    }
+
+    private static void addCustomTrade(WanderingTrader trader) {
+        MerchantOffers offers = trader.getOffers();
+
+        ItemStack cost = new ItemStack(Items.EMERALD, 64);
+        ItemStack result = new ItemStack(ModItems.WANDERING_GEM.get());
+
+        MerchantOffer offer = new MerchantOffer(cost, result, 5, 10, 0.05F);
+        offers.add(offer);
+    }
+
+    public static void spawnVillager(Level level, double x, double y, double z) {
+        ServerLevel serverLevel = (ServerLevel) level;
+        WanderingTrader trader = EntityType.WANDERING_TRADER.create(serverLevel);
+        if (trader == null) return;
+        trader.setPos(x,y,z);
+        trader.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(trader.blockPosition()), null, null, null);
+        addCustomTrade(trader);
+        level.addFreshEntity(trader);
+
+        ((ServerLevel) level).sendParticles(ParticleTypes.HAPPY_VILLAGER, x, y + 1, z, 30, 0.3, 0.5, 0.3, 0.02);
+        ((ServerLevel) level).sendParticles(ParticleTypes.CRIMSON_SPORE, x, y + 1, z, 40, 0.3, 0.6, 0.3, 0.1);
+
+        int xpPoints = 100;
+        level.addFreshEntity(new ExperienceOrb(level, trader.getX(), trader.getY(), trader.getZ(), xpPoints));
+        level.playSound(
+                null,
+                x, y, z,
+                SoundEvents.ENDER_CHEST_OPEN,
                 SoundSource.NEUTRAL,
                 1.0f,
                 1.2f
