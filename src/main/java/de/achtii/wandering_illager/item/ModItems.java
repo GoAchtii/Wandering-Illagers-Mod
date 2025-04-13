@@ -26,7 +26,7 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
 
     public static final RegistryObject<ForgeSpawnEggItem> WANDERING_SPAWN_EGG = ITEMS.register("wandering_spawn_egg",
-            ()-> new ForgeSpawnEggItem(ModEntities.WANDERINGILLAGER, 100000, 880808, new Item.Properties() ));
+            ()-> new ForgeSpawnEggItem(ModEntities.WANDERINGILLAGER, 0xF1BF7B, 0x705128, new Item.Properties() ));
 
     //Register Method
     public static void register(IEventBus eventBus){

@@ -8,6 +8,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -84,6 +85,7 @@ public class ModEvents {
                     double y = illager.getY();
                     double z = illager.getZ();
 
+                    level.addFreshEntity(new ExperienceOrb(level, target.getX(), target.getY(), target.getZ(), 200));
                     illager.discard();
                     spawnVillager(level, x, y, z);
 
@@ -99,7 +101,7 @@ public class ModEvents {
     public static void spawn(Level level, double x, double y, double z) {
         WanderingIllagerEntity WanderingIllager = new WanderingIllagerEntity(ModEntities.WANDERINGILLAGER.get(), (ServerLevel) level);
         WanderingIllager.setPos(x,y,z);
-        WanderingIllager.populateDefaultEquipmentSlots();
+        WanderingIllager.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE));
         level.addFreshEntity(WanderingIllager);
 
         ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE, x, y + 1, z, 30, 0.3, 0.5, 0.3, 0.02);
@@ -137,8 +139,6 @@ public class ModEvents {
         ((ServerLevel) level).sendParticles(ParticleTypes.HAPPY_VILLAGER, x, y + 1, z, 30, 0.3, 0.5, 0.3, 0.02);
         ((ServerLevel) level).sendParticles(ParticleTypes.CRIMSON_SPORE, x, y + 1, z, 40, 0.3, 0.6, 0.3, 0.1);
 
-        int xpPoints = 100;
-        level.addFreshEntity(new ExperienceOrb(level, trader.getX(), trader.getY(), trader.getZ(), xpPoints));
         level.playSound(
                 null,
                 x, y, z,
