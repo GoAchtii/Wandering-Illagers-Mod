@@ -4,7 +4,10 @@ import de.achtii.wandering_illager.entity.ModEntities;
 import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
 import de.achtii.wandering_illager.item.ModItems;
 import de.achtii.wandering_illager.wandering_illager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.contents.KeybindResolver;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,19 +15,25 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MerchantContainer;
+import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -36,15 +45,17 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Mod.EventBusSubscriber(modid = wandering_illager.MODID)
 public class ModEvents {
-
-
 
     //Adds new Trades to the Wandering Trader
     @SubscribeEvent
@@ -60,6 +71,7 @@ public class ModEvents {
         rareTrades.add(customTrade);
 
     }
+
 
     @SubscribeEvent
     public static void onTraderHit(LivingHurtEvent event) {
@@ -79,7 +91,6 @@ public class ModEvents {
             }
         }
     }
-
 
     @SubscribeEvent
     public static void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
@@ -142,10 +153,10 @@ public class ModEvents {
     public static void spawn(Level level, double x, double y, double z) {
         WanderingIllagerEntity WanderingIllager = new WanderingIllagerEntity(ModEntities.WANDERINGILLAGER.get(), (ServerLevel) level);
         WanderingIllager.setPos(x,y,z);
-        WanderingIllager.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE));
+        WanderingIllager.populateDefaultEquipmentSlots();
         level.addFreshEntity(WanderingIllager);
 
-        ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE, x, y + 1, z, 30, 0.3, 0.5, 0.3, 0.02);
+        ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE, x, y + 1, z, 50, 0.3, 0.5, 0.3, 0.02);
         ((ServerLevel) level).sendParticles(ParticleTypes.ENCHANT, x, y + 1, z, 40, 0.3, 0.6, 0.3, 0.1);
 
         level.playSound(
@@ -177,7 +188,7 @@ public class ModEvents {
         addCustomTrade(trader);
         level.addFreshEntity(trader);
 
-        ((ServerLevel) level).sendParticles(ParticleTypes.HAPPY_VILLAGER, x, y + 1, z, 30, 0.3, 0.5, 0.3, 0.02);
+        ((ServerLevel) level).sendParticles(ParticleTypes.HAPPY_VILLAGER, x, y + 1, z, 50, 0.3, 0.5, 0.3, 0.02);
         ((ServerLevel) level).sendParticles(ParticleTypes.CRIMSON_SPORE, x, y + 1, z, 40, 0.3, 0.6, 0.3, 0.1);
 
         level.playSound(
@@ -189,4 +200,21 @@ public class ModEvents {
                 1.2f
         );
     }
+
+    @SubscribeEvent
+    public static void giveItem(MobSpawnEvent event){
+        Mob entity = event.getEntity();
+        if (entity instanceof WanderingIllagerEntity wanderingIllager) {
+            if (!wanderingIllager.getPersistentData().getBoolean("HasWeapon")) {
+                wanderingIllager.populateDefaultEquipmentSlots();
+                if (wanderingIllager.getMainHandItem().equals(new ItemStack(Items.IRON_AXE))) {
+                    wanderingIllager.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(6.0);
+                } else if (wanderingIllager.getMainHandItem().equals(new ItemStack(Items.DIAMOND_AXE))){
+                    wanderingIllager.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(12.0);
+                }
+                wanderingIllager.getPersistentData().putBoolean("HasWeapon", true);
+            }
+        }
+    }
 }
+

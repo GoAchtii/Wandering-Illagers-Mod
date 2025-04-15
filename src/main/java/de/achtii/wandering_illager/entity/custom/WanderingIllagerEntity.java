@@ -175,7 +175,7 @@ public class WanderingIllagerEntity extends AbstractIllager {
                 .add(Attributes.MOVEMENT_SPEED, 0.3599999940395355)
                 .add(Attributes.FOLLOW_RANGE, 16.0)
                 .add(Attributes.MAX_HEALTH, 28.0)
-                .add(Attributes.ATTACK_DAMAGE, 10.0);
+                .add(Attributes.ATTACK_DAMAGE, 3.0);
     }
 
     @Nullable

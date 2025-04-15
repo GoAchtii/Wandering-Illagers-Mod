@@ -34,7 +34,10 @@ public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
 
             Player player = Minecraft.getInstance().player;
             assert player != null;
-            if (player.getMainHandItem().getItem() != ModItems.WANDERING_GEM.get()) {
+            if (player.getMainHandItem().getItem() == ModItems.WANDERING_GEM.get() && (Math.abs(player.getX()) <= Math.abs(entity.getX()) + 10 || Math.abs(player.getZ()) <= Math.abs(entity.getZ()) + 10)) {
+                return;
+            }
+            else if (player != null){
                 if (isTimeToStartAttackAnimation()) {
                     entity.setAttacking(true);
                 }

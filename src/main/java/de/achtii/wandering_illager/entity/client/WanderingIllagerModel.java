@@ -120,16 +120,11 @@ public class WanderingIllagerModel<T extends Entity> extends HierarchicalModel<T
 
 	@Override
 	public void translateToHand(HumanoidArm humanoidArm, PoseStack poseStack) {
-		this.root().translateAndRotate(poseStack);
 
-		if (right_arm.visible && left_arm.visible){
 		if (humanoidArm == HumanoidArm.RIGHT) {
 			this.right_arm.translateAndRotate(poseStack);
-			poseStack.translate(1.0F, -2F, 0.0F);
 		} else {
 			this.left_arm.translateAndRotate(poseStack);
-			poseStack.translate(1.0F, -2F, 0.0F);
-		}
 		}
 	}
 }
