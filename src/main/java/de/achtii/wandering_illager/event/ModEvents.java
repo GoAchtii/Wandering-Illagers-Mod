@@ -5,35 +5,23 @@ import de.achtii.wandering_illager.entity.custom.WanderingIllagerEntity;
 import de.achtii.wandering_illager.item.ModItems;
 import de.achtii.wandering_illager.wandering_illager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.contents.KeybindResolver;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MerchantContainer;
-import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffers;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -45,12 +33,9 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.glfw.GLFW;
+import org.apache.logging.log4j.core.jmx.Server;
 
-import java.awt.*;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 
@@ -202,19 +187,48 @@ public class ModEvents {
     }
 
     @SubscribeEvent
+    public static void DistanceCheck(MobSpawnEvent event){
+        Level level = event.getLevel().getLevel();
+        Player player = Minecraft.getInstance().player;
+        assert player != null;
+        LivingEntity entity = event.getEntity();
+        if (entity instanceof WanderingTrader trader) {
+            boolean hasGemTrade = trader.getOffers().stream()
+                    .anyMatch(offer -> offer.getResult().is(ModItems.WANDERING_GEM.get()));
+            boolean DistanceCheck = Math.sqrt(Math.pow(player.getX() - trader.getX(), 2) + Math.pow(player.getY() - trader.getY(), 2) + Math.pow(player.getZ() - trader.getZ(), 2)) < 2;
+            if (DistanceCheck){
+                if (hasGemTrade) {
+                    spawn(level, trader.getX(), trader.getY(), trader.getZ());
+                    trader.discard();
+                    level.playSound(
+                            null,
+                            trader.getX(), trader.getY(), trader.getZ(),
+                            SoundEvents.VINDICATOR_CELEBRATE,
+                            SoundSource.NEUTRAL,
+                            1.0f,
+                            1.2f);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void giveItem(MobSpawnEvent event){
         Mob entity = event.getEntity();
         if (entity instanceof WanderingIllagerEntity wanderingIllager) {
             if (!wanderingIllager.getPersistentData().getBoolean("HasWeapon")) {
                 wanderingIllager.populateDefaultEquipmentSlots();
                 if (wanderingIllager.getMainHandItem().equals(new ItemStack(Items.IRON_AXE))) {
-                    wanderingIllager.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(6.0);
+                    Objects.requireNonNull(wanderingIllager.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(6.0);
                 } else if (wanderingIllager.getMainHandItem().equals(new ItemStack(Items.DIAMOND_AXE))){
-                    wanderingIllager.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(12.0);
+                    Objects.requireNonNull(wanderingIllager.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(12.0);
                 }
                 wanderingIllager.getPersistentData().putBoolean("HasWeapon", true);
             }
         }
+
     }
 }
+
+
 
