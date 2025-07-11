@@ -9,6 +9,8 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.List;
+
 public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
     private final WanderingIllagerEntity entity;
     private int attackDelay = 9;
@@ -32,28 +34,26 @@ public class WanderingIllagerAttackGoal extends MeleeAttackGoal {
         if (isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
             shouldCountTillNextAttack = true;
 
-            Player player = Minecraft.getInstance().player;
-            assert player != null;
-            boolean ItemCheck = player.getMainHandItem().getItem() == ModItems.WANDERING_GEM.get();
-            boolean DistanceCheck = Math.sqrt(Math.pow(player.getX() - entity.getX(), 2) + Math.pow(player.getY() - entity.getY(), 2) + Math.pow(player.getZ() - entity.getZ(), 2)) < 10;
-            if (ItemCheck && DistanceCheck) {
-                return;
-            }
-            else if (player != null){
-                if (isTimeToStartAttackAnimation()) {
-                    entity.setAttacking(true);
+            List<Player> players = mob.level().getEntitiesOfClass(Player.class, mob.getBoundingBox().inflate(10));
+            for (Player player : players) {
+                boolean itemCheck = player.getMainHandItem().getItem() == ModItems.WANDERING_GEM.get();
+                if (itemCheck) {
+                    return;
                 }
+            }
+            if (isTimeToStartAttackAnimation()) {
+                entity.setAttacking(true);
+            }
 
-                if (isTimeToAttack()) {
-                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getEyeY(), pEnemy.getZ());
-                    performAttack(pEnemy);
-                }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttacking(false);
-                entity.attackAnimationTimeout = 0;
+            if (isTimeToAttack()) {
+                this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getEyeY(), pEnemy.getZ());
+                performAttack(pEnemy);
             }
+        } else {
+            resetAttackCooldown();
+            shouldCountTillNextAttack = false;
+            entity.setAttacking(false);
+            entity.attackAnimationTimeout = 0;
         }
     }
 

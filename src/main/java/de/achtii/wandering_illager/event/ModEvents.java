@@ -14,7 +14,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -33,7 +32,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.List;
 import java.util.Objects;
@@ -187,16 +185,16 @@ public class ModEvents {
     }
 
     @SubscribeEvent
-    public static void DistanceCheck(MobSpawnEvent event){
+    public static void DistanceCheck(MobSpawnEvent event) {
         Level level = event.getLevel().getLevel();
-        Player player = Minecraft.getInstance().player;
-        assert player != null;
         LivingEntity entity = event.getEntity();
+
         if (entity instanceof WanderingTrader trader) {
             boolean hasGemTrade = trader.getOffers().stream()
                     .anyMatch(offer -> offer.getResult().is(ModItems.WANDERING_GEM.get()));
-            boolean DistanceCheck = Math.sqrt(Math.pow(player.getX() - trader.getX(), 2) + Math.pow(player.getY() - trader.getY(), 2) + Math.pow(player.getZ() - trader.getZ(), 2)) < 2;
-            if (DistanceCheck){
+
+            List<Player> players = level.getEntitiesOfClass(Player.class, trader.getBoundingBox().inflate(2));
+            for (Player player : players) {
                 if (hasGemTrade) {
                     spawn(level, trader.getX(), trader.getY(), trader.getZ());
                     trader.discard();
@@ -207,6 +205,7 @@ public class ModEvents {
                             SoundSource.NEUTRAL,
                             1.0f,
                             1.2f);
+                    break;
                 }
             }
         }
